@@ -1,0 +1,17 @@
+{
+  "name": "dialogflow-wikipedia-webhook-sample",
+  "version": "0.0.1",
+  "description": "A simple node.js webhook for Google Dialogflow which does Wikipedia lookups and returns it to the bot",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.16.3",
+    "body-parser": "^1.18.3"
+  },
+  "engines": {
+    "node": "8.x"
+  },
+  "license": "MIT"
+}
