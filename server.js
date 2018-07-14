@@ -26,7 +26,7 @@ app.post('/wikilookup', (req, res) => {
     // const wikiOpenSearchPath = 'https://en.wikipedia.org/w/api.php?&format=json&action=opensearch&limit=2&profile=fuzzy&search=global%20warming';
 
     // get all parameters from the Dialogflow POST request
-    const parameters = req.body.queryResult.parameters;
+    let parameters = req.body.queryResult.parameters;
 
     // only proceed if parameters are sent (shouldn't really happen)
     if (isEmptyObject(parameters)) {
@@ -36,55 +36,21 @@ app.post('/wikilookup', (req, res) => {
         });
     }
 
-    // we can split logic based on parameters if we want
-    // in our case we have two entities, painting and painter
-    if (parameters.painting) {
-
-        let wikiReqUrl = encodeURI(`${wikiReqPath}&titles=${parameters.painting}`);
-
-        // do a GET request to the API
-        https.get(wikiReqUrl, (responseFromAPI) => {
-
-            let completeResponse = ''; // placeholder
-
-            responseFromAPI.on('data', (chunk) => {
-                completeResponse += chunk;
-            });
-            responseFromAPI.on('end', () => {
-
-                // parse the response and pass the value we want into fulfillmentText which is sent back to Dialogflow
-                let searchResults = JSON.parse(completeResponse);
-
-                return res.json({
-                    fulfillmentText: searchResults.query.pages[0].extract,
-                    source: 'wikilookup'
-                });
-
-            });
-        }, (error) => {
-
-            return res.json({
-                fulfillmentText: 'Something went wrong!',
-                source: 'wikilookup-painting-error'
-            });
-
-        });
-
-    } else if (parameters.painter) {
+    // we can split logic based on e.g. parameters if we want
+    // in our case we have a parameter "painter" that we might want to look up in a specific way
+    if (parameters.painter) {
 
         let wikiReqUrl = encodeURI(`${wikiReqPath}${parameters.painter}`);
 
-        // do a GET request to the API
         https.get(wikiReqUrl, (responseFromAPI) => {
 
-            let completeResponse = ''; // placeholder
+            let completeResponse = '';
 
             responseFromAPI.on('data', (chunk) => {
                 completeResponse += chunk;
             });
             responseFromAPI.on('end', () => {
 
-                // parse the response and pass the value we want into fulfillmentText which is sent back to user
                 let searchResults = JSON.parse(completeResponse);
 
                 return res.json({
